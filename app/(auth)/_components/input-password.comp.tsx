@@ -13,7 +13,7 @@ import {
 
 export type InputPasswordCompProps = ComponentProps<'input'>
 
-export function InputPasswordComp(props: InputPasswordCompProps) {
+export function InputPassword(props: InputPasswordCompProps) {
   const [showPassword, setShowPassword] = useState(false)
 
   const Icon = showPassword ? IconEye : IconEyeOff
