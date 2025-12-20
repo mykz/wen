@@ -1,6 +1,6 @@
 import { ReactNode } from 'react'
 
-import { LogoText } from '@/components/logo'
+import { Icon } from '@/components/logo'
 
 type AuthLayoutProps = {
   children: ReactNode
@@ -9,8 +9,10 @@ type AuthLayoutProps = {
 export default function AuthLayout({ children }: AuthLayoutProps) {
   return (
     <div className="flex h-screen w-screen items-center justify-center px-4 md:px-0">
-      <LogoText className="absolute top-5 left-5 w-15 h-auto" />
-      <div className="space-y-10 max-w-sm w-full text-center">{children}</div>
+      <div className="space-y-10 max-w-80 w-full text-center">
+        <Icon className="mx-auto w-13 h-auto" />
+        {children}
+      </div>
     </div>
   )
 }

@@ -12,7 +12,7 @@ export function Headline({ as = 'h1', children, className }: HeadlineProps) {
   const Heading = as
 
   return (
-    <Heading className={cn('text-3xl font-bold tracking-tight', className)}>
+    <Heading className={cn('text-2xl font-bold tracking-tight', className)}>
       {children}
     </Heading>
   )

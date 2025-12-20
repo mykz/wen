@@ -3,6 +3,8 @@ import { Geist, Geist_Mono, JetBrains_Mono } from 'next/font/google'
 
 import './globals.css'
 
+import { ReactNode } from 'react'
+
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-sans',
@@ -23,11 +25,11 @@ export const metadata: Metadata = {
   description: 'WEN is a minimal, context-aware link-in-bio web app.',
 }
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+type RootLayoutProps = {
+  children: ReactNode
+}
+
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" className={jetbrainsMono.variable}>
       <body

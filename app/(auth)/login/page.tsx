@@ -4,15 +4,15 @@ import { Headline } from '@/components/headline'
 
 import { AuthForm } from '../_components/auth-form'
 
-export default function SignupPage() {
+export default function LoginPage() {
   return (
     <>
-      <Headline>Create your account</Headline>
+      <Headline>Log in to WEN</Headline>
 
       <AuthForm />
 
       <div className="text-sm text-muted-foreground">
-        Already have an account? <Link href="/login">Login</Link>
+        Don't have an account? <Link href="/signup">Sign up</Link>
       </div>
     </>
   )

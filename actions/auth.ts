@@ -1,52 +1,48 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
 import z from 'zod'
 
 import { getGenericErrorMessage } from '@/supabase/error'
 import { createClient } from '@/supabase/server'
-import { SignUpSchema } from '@/zod/auth'
+import { AuthSchema } from '@/zod/auth'
 
-export async function signUpAction(_prevState: unknown, formData: FormData) {
+type ErrorFields = Record<string, string[]>
+
+export async function authAction(_prevState: unknown, formData: FormData) {
+  const errors: ErrorFields = {
+    email: [],
+    generic: [],
+  }
+
   const data = Object.fromEntries(formData)
 
-  const validationResult = SignUpSchema.safeParse(data)
+  const validationResult = AuthSchema.safeParse(data)
 
-  // Don't send back the password
   const fields = { email: data.email as string }
 
   if (!validationResult.success)
     return {
-      errors: z.flattenError(validationResult.error).fieldErrors,
+      success: false,
+      errors: {
+        ...errors,
+        ...z.flattenError(validationResult.error).fieldErrors,
+      },
       fields,
     }
 
   const supabase = await createClient()
 
-  const response = await supabase.auth.signUp(validationResult.data)
+  const response = await supabase.auth.signInWithOtp({
+    email: validationResult.data.email,
+    options: {
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+    },
+  })
 
-  if (!response.error) {
-    revalidatePath(`/page`)
-    redirect(`/page`)
-  }
-
-  const errors: Record<string, string[]> = {
-    email: [],
-    password: [],
-    generic: [],
-  }
-
-  switch (response.error.code) {
-    case 'user_already_exists':
-      errors.email.push('Email already in use. Please log in.')
-      break
-    default:
-      errors.generic.push(getGenericErrorMessage(response))
-      break
-  }
+  if (response.error) errors.generic.push(getGenericErrorMessage(response))
 
   return {
+    success: !response.error,
     errors,
     fields,
   }
