@@ -1,7 +1,3 @@
-import Link from 'next/link'
-
-import { Headline } from '@/components/headline'
-
 import { AuthForm } from '../_components/auth-form'
 
 export default function LoginPage() {

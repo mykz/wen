@@ -1,8 +1,7 @@
 'use client'
 
-import { ComponentType, FC, useEffect, useState } from 'react'
+import { ComponentType, useState } from 'react'
 
-import { Icon as TablerIcon } from '@tabler/icons-react'
 import { AnimatePresence, motion, MotionProps } from 'motion/react'
 
 import { Icon } from './logo'
@@ -15,20 +14,13 @@ type ControlBarProps = {
 }
 
 export function ControlBar({ actions = [] }: ControlBarProps) {
-  const [mounted, setMounted] = useState(false)
   const [showLinks, setShowLinks] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   const onAnimationComplete = () => {
     if (!actions.length) return
 
     setShowLinks(true)
   }
-
-  if (!mounted) return null
 
   const containerProps: MotionProps = {
     variants: {

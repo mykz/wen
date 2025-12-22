@@ -30,15 +30,19 @@ export function AppControlBar() {
   return (
     <>
       <DrawerDialog
-        title="Edit profile"
-        description="Make changes to your profile here. Click save when you're done."
+        title="Share"
         isOpen={isOpen}
         onChangeOpen={setIsOpen}
+        actions={[
+          {
+            children: 'Save',
+            onClick: () => {
+              setIsOpen(false)
+            },
+          },
+        ]}
       >
-        <div>
-          <h1>Edit profile</h1>
-          <p>Make changes to your profile here. Click save when you're done.</p>
-        </div>
+        Some content
       </DrawerDialog>
       <ControlBar actions={actions} />
     </>
