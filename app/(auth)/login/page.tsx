@@ -7,13 +7,12 @@ import { AuthForm } from '../_components/auth-form'
 export default function LoginPage() {
   return (
     <>
-      <Headline>Log in to WEN</Headline>
+      <div className="space-y-1">
+        <h1 className="text-2xl font-bold tracking-tight">Welcome to WEN</h1>
+        <p className="text-base text-muted-foreground">Create your WEN.</p>
+      </div>
 
       <AuthForm />
-
-      <div className="text-sm text-muted-foreground">
-        Don't have an account? <Link href="/signup">Sign up</Link>
-      </div>
     </>
   )
 }

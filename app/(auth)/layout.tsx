@@ -1,6 +1,6 @@
 import { ReactNode } from 'react'
 
-import { Icon } from '@/components/logo'
+import { ControlBar } from '@/components/control-bar'
 
 type AuthLayoutProps = {
   children: ReactNode
@@ -8,11 +8,11 @@ type AuthLayoutProps = {
 
 export default function AuthLayout({ children }: AuthLayoutProps) {
   return (
-    <div className="flex h-screen w-screen items-center justify-center px-4 md:px-0">
-      <div className="space-y-10 max-w-80 w-full text-center">
-        <Icon className="mx-auto w-13 h-auto" />
-        {children}
+    <>
+      <div className="flex h-screen w-screen items-center justify-center px-4 md:px-0">
+        <div className="space-y-10 max-w-80 w-full text-center">{children}</div>
       </div>
-    </div>
+      <ControlBar />
+    </>
   )
 }

@@ -39,7 +39,7 @@ export async function authAction(_prevState: unknown, formData: FormData) {
     },
   })
 
-  if (response.error) errors.generic.push(getGenericErrorMessage(response))
+  if (response.error) errors.email.push(getGenericErrorMessage(response))
 
   return {
     success: !response.error,

@@ -36,7 +36,7 @@ export function AuthForm() {
                   type="email"
                   name="email"
                   defaultValue={state.fields?.email}
-                  placeholder="Enter your email"
+                  placeholder="Your email"
                 />
                 <FieldError>{state.errors?.email?.[0]}</FieldError>
               </Field>
