@@ -4,8 +4,10 @@ import { useState } from 'react'
 
 import { IconPalette, IconSettings, IconShare } from '@tabler/icons-react'
 
+import { ContextPanel } from '@/components/context-panel'
 import { ControlBar } from '@/components/control-bar'
-import { DrawerDialog } from '@/components/drawer-dialog'
+import { PanelContent, PanelFooter, PanelHeader } from '@/components/panel'
+import { Button } from '@/components/ui/button'
 
 export function AppControlBar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -29,21 +31,23 @@ export function AppControlBar() {
 
   return (
     <>
-      <DrawerDialog
-        title="Share"
-        isOpen={isOpen}
-        onChangeOpen={setIsOpen}
-        actions={[
-          {
-            children: 'Save',
-            onClick: () => {
-              setIsOpen(false)
-            },
-          },
-        ]}
-      >
-        Some content
-      </DrawerDialog>
+      <ContextPanel isOpen={isOpen} onChangeOpen={setIsOpen}>
+        <PanelHeader
+          title="Share"
+          action={
+            <Button variant="outline" size="xs">
+              Create Link
+            </Button>
+          }
+        />
+        <PanelContent>
+          <p>Share the current page with others</p>
+        </PanelContent>
+        <PanelFooter>
+          <Button>Save</Button>
+        </PanelFooter>
+      </ContextPanel>
+
       <ControlBar actions={actions} />
     </>
   )
