@@ -74,9 +74,9 @@ export function ControlBar({ actions = [] }: ControlBarProps) {
     <AnimatePresence>
       <motion.div
         {...containerProps}
-        className="px-3 py-3 fixed bottom-0 left-0 flex items-center justify-center gap-2 w-full"
+        className="px-2 py-4.5 fixed bottom-0 left-0 flex items-center justify-center gap-2 w-full"
       >
-        <div className="bg-background px-2.5 py-1.5 flex items-center justify-center gap-4">
+        <div className="bg-background px-2.5 flex items-center justify-center gap-4">
           <motion.div layout>
             <Icon className="mx-auto w-11 h-auto" />
           </motion.div>
