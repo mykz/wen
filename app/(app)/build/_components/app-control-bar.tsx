@@ -5,12 +5,7 @@ import { useState } from 'react'
 import { IconPalette, IconSettings } from '@tabler/icons-react'
 
 import { ControlBar } from '@/components/control-bar'
-import {
-  ContextPanel,
-  PanelContent,
-  PanelFooter,
-  PanelHeader,
-} from '@/components/panel'
+import { ContextPanel, PanelContent, PanelHeader } from '@/components/panel'
 import { Button } from '@/components/ui/button'
 
 export function AppControlBar() {
@@ -23,20 +18,22 @@ export function AppControlBar() {
     },
     {
       Component: IconSettings,
-      onClick: () => {},
+      onClick: () => {
+        setIsOpen(true)
+      },
     },
   ]
 
   return (
     <>
       <ContextPanel isOpen={isOpen} onChangeOpen={setIsOpen}>
-        <PanelHeader title="Share" action={<Button size="xs">+ Add</Button>} />
+        <PanelHeader
+          title="Campaigns"
+          action={<Button size="sm">+ Add</Button>}
+        />
         <PanelContent>
-          <p>Share the current page with others</p>
+          <div>Campaigns list</div>
         </PanelContent>
-        <PanelFooter>
-          <Button>Save</Button>
-        </PanelFooter>
       </ContextPanel>
 
       <ControlBar actions={actions} />

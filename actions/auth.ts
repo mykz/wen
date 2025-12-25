@@ -2,7 +2,11 @@
 
 import z from 'zod'
 
-import { getGenericErrorMessage } from '@/supabase/error'
+import { getAuthUser } from '@/lib/auth'
+import {
+  getGenericErrorMessage,
+  getUnauthorizedErrorMessage,
+} from '@/supabase/error'
 import { createClient } from '@/supabase/server'
 import { AuthSchema } from '@/zod/auth'
 
@@ -46,4 +50,22 @@ export async function authAction(_prevState: unknown, formData: FormData) {
     errors,
     fields,
   }
+}
+
+export async function updateAuthUserEditHintAction() {
+  const supabase = await createClient()
+  const user = await getAuthUser()
+
+  if (!user) return { error: getUnauthorizedErrorMessage() }
+
+  const response = await supabase.auth.updateUser({
+    data: { dismissed_edit_hint: true },
+  })
+
+  if (response.error)
+    return {
+      error: response.error.message,
+    }
+
+  return { data: true }
 }

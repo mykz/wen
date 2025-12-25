@@ -7,3 +7,7 @@ export function getGenericErrorMessage(
 
   return `The timing was off. Try once more. (Code: ${errorCode})`
 }
+
+export function getUnauthorizedErrorMessage() {
+  return 'Unauthorized. Please log in. (Code: 401)'
+}

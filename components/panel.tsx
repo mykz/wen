@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import { ComponentProps, ReactNode } from 'react'
 
 import { useMediaQuery } from '@/hooks/use-media-query'
 import { cn } from '@/lib/utils'
@@ -32,19 +32,11 @@ export function PanelHeader({ title, description, action }: PanelHeaderProps) {
   )
 }
 
-type PanelContentProps = {
-  children: ReactNode
-}
-
-export function PanelContent({ children }: PanelContentProps) {
+export function PanelContent({ children }: ComponentProps<'div'>) {
   return <div className="mb-0">{children}</div>
 }
 
-type PanelFooterProps = {
-  children: ReactNode
-}
-
-export function PanelFooter({ children }: PanelFooterProps) {
+export function PanelFooter({ children }: ComponentProps<'div'>) {
   const isDesktop = useMediaQuery('(min-width: 768px)')
 
   return (
