@@ -5,17 +5,10 @@ import { useEffect, useState } from 'react'
 import debounce from 'lodash.debounce'
 
 import { updateAuthUserPageAction } from '@/actions/page'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { getfirstAndLastCharacter } from '@/lib/string'
 
+import { Avatar } from './avatar'
 import { BioField } from './bio-field'
-
-function getfirstAndLastCharacter(name: string) {
-  if (!name) return ''
-
-  const [first, ...rest] = name.split(' ')
-
-  return [first, rest.at(-1)].map((word) => word?.[0] ?? '').join('')
-}
 
 type ProfileProps = {
   imageUrl?: string | null
@@ -43,10 +36,10 @@ export function Profile({
 
   return (
     <div className="space-y-5">
-      <Avatar className="size-20 rounded mx-auto">
-        <AvatarImage src={imageUrl ?? undefined} />
-        <AvatarFallback>{getfirstAndLastCharacter(name ?? '')}</AvatarFallback>
-      </Avatar>
+      <Avatar
+        imageUrl={imageUrl}
+        fallback={getfirstAndLastCharacter(name ?? '')}
+      />
 
       <div className="space-y-2">
         <input
