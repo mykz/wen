@@ -1,7 +1,9 @@
 import { IconBrandTiktok, IconBrandX } from '@tabler/icons-react'
+import { notFound } from 'next/navigation'
 
-import { getOrCreateAuthUserPage } from '@/api/page'
+import { getOrCreatePage } from '@/api/page'
 import { Button } from '@/components/ui/button'
+import { PageProvider } from '@/contexts/page'
 import { requiresAuth } from '@/lib/auth'
 
 import { AppControlBar } from './_components/app-control-bar'
@@ -11,10 +13,13 @@ import { Profile } from './_components/profile'
 
 export default async function BuildPage() {
   const user = await requiresAuth()
-  const page = await getOrCreateAuthUserPage()
+  const page = await getOrCreatePage()
+
+  // TODO: Create a notFound page for this
+  if (!page.data) return notFound()
 
   return (
-    <>
+    <PageProvider page={page.data}>
       <div className="absolute top-0 left-0 w-full py-4 px-2 bg-background flex flex-col gap-2 items-center justify-center space-y-10">
         <div className="flex items-center gap-2 justify-center text-base">
           <span className="bg-destructive rounded-full size-1.5 block" />
@@ -29,11 +34,7 @@ export default async function BuildPage() {
       <div className="flex h-screen w-screen items-center justify-center px-4 md:px-0">
         <div className="space-y-10 max-w-80 w-full text-center">
           <div className="space-y-10">
-            <Profile
-              imageUrl={page.data?.image_url}
-              name={page.data?.name}
-              bio={page.data?.bio}
-            />
+            <Profile />
 
             <PlaceholderButton size="lg">Add campaign</PlaceholderButton>
 
@@ -71,6 +72,6 @@ export default async function BuildPage() {
       </div>
 
       <AppControlBar />
-    </>
+    </PageProvider>
   )
 }

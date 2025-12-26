@@ -1,6 +1,8 @@
 'use client'
 
-import { useActionState } from 'react'
+import { useActionState, useEffect } from 'react'
+
+import { toast } from 'sonner'
 
 import { authAction } from '@/actions/auth'
 import { Button } from '@/components/ui/button'
@@ -14,6 +16,14 @@ export function AuthForm() {
     errors: {},
     fields: { email: '' },
   })
+
+  useEffect(() => {
+    const genericError = state.errors?.generic?.[0]
+
+    if (!genericError) return
+
+    toast.error(genericError)
+  }, [state.errors?.generic])
 
   return (
     <>

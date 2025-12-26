@@ -1,22 +1,20 @@
 'use server'
 
-import { randomUUID } from 'crypto'
-
 import { revalidatePath } from 'next/cache'
 
+import { ERROR_MESSAGES } from '@/constants/errors'
 import { getAuthUser } from '@/lib/auth'
-import { getUnauthorizedErrorMessage } from '@/supabase/error'
 import { createClient } from '@/supabase/server'
 import { ApiResponse } from '@/types/api'
 import { Page } from '@/types/page'
 
-export async function updateAuthUserPageAction(
+export async function updatePageAction(
   page: Partial<Page>,
 ): Promise<ApiResponse<Page>> {
   const supabase = await createClient()
   const user = await getAuthUser()
 
-  if (!user) return { error: getUnauthorizedErrorMessage() }
+  if (!user) return { error: ERROR_MESSAGES.UNAUTHORIZED }
 
   const response = await supabase
     .from('pages')
@@ -25,8 +23,6 @@ export async function updateAuthUserPageAction(
     .select('id, slug, name, bio, image_url')
     .maybeSingle()
 
-  console.log(response)
-
   if (response.error) return { error: response.error.message }
 
   revalidatePath('/build')
@@ -34,19 +30,24 @@ export async function updateAuthUserPageAction(
   return { data: response.data }
 }
 
-export async function uploadAuthUserPageAvatarAction(
-  formData: FormData,
-): Promise<ApiResponse<{ imageUrl: string }>> {
+type UploadPageImageActionProps = {
+  pageId: string
+  formData: FormData
+}
+
+export async function uploadPageImageAction({
+  pageId,
+  formData,
+}: UploadPageImageActionProps): Promise<ApiResponse<{ imageUrl: string }>> {
   const supabase = await createClient()
   const user = await getAuthUser()
 
-  if (!user) return { error: getUnauthorizedErrorMessage() }
+  if (!user) return { error: ERROR_MESSAGES.UNAUTHORIZED }
 
   const file = formData.get('file')
-  if (!(file instanceof File)) return { error: 'Image file is required' }
+  if (!(file instanceof File)) return { error: 'No image selected.' }
 
-  const ext = file.type.split('/')[1] ?? 'jpg'
-  const path = `${user.id}/${randomUUID()}.${ext}`
+  const path = `${user.id}/${pageId}`
 
   const arrayBuffer = await file.arrayBuffer()
   const bytes = new Uint8Array(arrayBuffer)
@@ -56,9 +57,7 @@ export async function uploadAuthUserPageAvatarAction(
     upsert: true,
   })
 
-  console.log(response)
-
-  if (response.error) return { error: response.error.message }
+  if (response.error) return { error: "That didn't upload. Try again." }
 
   const { data } = supabase.storage.from('avatars').getPublicUrl(path)
 

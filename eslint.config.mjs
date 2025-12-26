@@ -19,6 +19,7 @@ const eslintConfig = defineConfig([
     rules: {
       // js
       'import/no-anonymous-default-export': 'off',
+      'no-console': 'error',
       // React
       'react/no-unescaped-entities': 'off',
       'react-hooks/set-state-in-effect': 'off',

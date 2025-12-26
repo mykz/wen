@@ -1,58 +1,49 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 
-import debounce from 'lodash.debounce'
-
-import { updateAuthUserPageAction } from '@/actions/page'
-import { getfirstAndLastCharacter } from '@/lib/string'
+import { usePage } from '@/contexts/page'
 
 import { Avatar } from './avatar'
 import { BioField } from './bio-field'
 
-type ProfileProps = {
-  imageUrl?: string | null
-  name?: string | null
-  bio?: string | null
-}
+export function Profile() {
+  const { update, page } = usePage()
 
-export function Profile({
-  imageUrl,
-  name: nameProp,
-  bio: bioProp,
-}: ProfileProps) {
-  const [name, setName] = useState(nameProp ?? undefined)
-  const [bio, setBio] = useState(bioProp ?? undefined)
+  const [name, setName] = useState(page.name ?? '')
+  const [bio, setBio] = useState(page.bio ?? '')
 
-  useEffect(() => {
-    const save = debounce(async () => {
-      await updateAuthUserPageAction({ name, bio })
-    }, 1000)
+  useEffect(() => setName(page.name ?? ''), [page.name])
+  useEffect(() => setBio(page.bio ?? ''), [page.bio])
 
-    save()
+  const onChangeName = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
 
-    return () => save.cancel()
-  }, [name, bio])
+    setName(value)
+    update({ name: value })
+  }
+  const onChangeBio = (value: string) => {
+    setBio(value)
+    update({ bio: value })
+  }
 
   return (
     <div className="space-y-5">
-      <Avatar
-        imageUrl={imageUrl}
-        fallback={getfirstAndLastCharacter(name ?? '')}
-      />
+      <Avatar />
 
       <div className="space-y-2">
         <input
           type="text"
           name="name"
-          value={name ?? ''}
+          value={name}
           placeholder="Your Name"
           maxLength={32}
-          onChange={(e) => setName(e.target.value)}
+          onChange={onChangeName}
           className="text-3xl font-bold tracking-tight w-full text-center outline-none placeholder:text-foreground focus:placeholder:opacity-0"
+          autoComplete="off"
         />
 
-        <BioField value={bio ?? ''} onChange={(v) => setBio(v)} />
+        <BioField value={bio} onChange={onChangeBio} />
       </div>
     </div>
   )

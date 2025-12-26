@@ -5,6 +5,8 @@ import './globals.css'
 
 import { ReactNode } from 'react'
 
+import { Toaster } from '@/components/ui/sonner'
+
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-sans',
@@ -35,7 +37,8 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <main>{children}</main>
+        <Toaster position="top-center" />
       </body>
     </html>
   )

@@ -4,7 +4,7 @@ import { useState } from 'react'
 
 import { IconX } from '@tabler/icons-react'
 
-import { updateAuthUserEditHintAction } from '@/actions/auth'
+import { updateDismissedEditHintAction } from '@/actions/user'
 import { Badge } from '@/components/ui/badge'
 
 interface EditHintProps {
@@ -17,7 +17,7 @@ export function EditHint({ isDismissed: isDismissedProp }: EditHintProps) {
   const onClick = async () => {
     setIsDismissed(true)
 
-    await updateAuthUserEditHintAction()
+    await updateDismissedEditHintAction()
   }
 
   if (isDismissed) return null

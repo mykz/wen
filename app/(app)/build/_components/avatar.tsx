@@ -1,44 +1,47 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useTransition } from 'react'
 
-import { uploadAuthUserPageAvatarAction } from '@/actions/page'
+import { toast } from 'sonner'
+
+import { uploadPageImageAction } from '@/actions/page'
 import {
   AvatarFallback,
   AvatarImage,
   Avatar as CNAvatar,
 } from '@/components/ui/avatar'
+import { usePage } from '@/contexts/page'
+import { getfirstAndLastCharacter } from '@/lib/string'
+import { cn } from '@/lib/utils'
 
-type AvatarProps = {
-  imageUrl?: string | null
-  fallback?: string
-}
+export function Avatar() {
+  const { page, update } = usePage()
 
-export function Avatar({ imageUrl, fallback }: AvatarProps) {
-  const [file, setFile] = useState<File | null>(null)
+  const [isUploading, startUpload] = useTransition()
 
   const inputRef = useRef<HTMLInputElement>(null)
 
-  useEffect(() => {
+  const onChange = () => {
+    const file = inputRef.current?.files?.[0] ?? null
     if (!file) return
-    ;(async () => {
-      console.log('file', file)
 
-      const fileData = new FormData()
-      fileData.set('file', file)
+    startUpload(async () => {
+      const formData = new FormData()
+      formData.set('file', file)
 
-      const response = await uploadAuthUserPageAvatarAction(fileData)
+      const { error, data } = await uploadPageImageAction({
+        pageId: page.id,
+        formData,
+      })
 
-      if (response.error) {
-        // Wee need to add some toast
+      if (error) {
+        toast.error(error)
         return
       }
 
-      console.log(response.data)
-    })()
-  }, [file])
+      update({ image_url: data?.imageUrl ?? null })
+    })
+  }
 
   const onClick = () => inputRef.current?.click()
-
-  const previewUrl = file ? URL.createObjectURL(file) : imageUrl
 
   return (
     <div>
@@ -48,12 +51,20 @@ export function Avatar({ imageUrl, fallback }: AvatarProps) {
         type="file"
         accept="image/jpeg,image/png,image/webp"
         className="hidden"
-        onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+        onChange={onChange}
       />
 
-      <CNAvatar className="size-20 rounded mx-auto" onClick={onClick}>
-        <AvatarImage src={previewUrl ?? undefined} />
-        <AvatarFallback>{fallback}</AvatarFallback>
+      <CNAvatar
+        className={cn(
+          'size-20 rounded mx-auto',
+          isUploading && 'animate-pulse',
+        )}
+        onClick={onClick}
+      >
+        <AvatarImage src={page.image_url ?? undefined} />
+        <AvatarFallback>
+          {getfirstAndLastCharacter(page.name ?? '')}
+        </AvatarFallback>
       </CNAvatar>
     </div>
   )
