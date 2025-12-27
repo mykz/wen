@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-import { IconPalette, IconSettings } from '@tabler/icons-react'
+import { IconDotsVertical, IconGraph, IconPalette } from '@tabler/icons-react'
 
 import { ControlBar } from '@/components/control-bar'
 import { ContextPanel, PanelContent, PanelHeader } from '@/components/panel'
@@ -13,11 +13,15 @@ export function AppControlBar() {
 
   const actions = [
     {
+      Component: IconGraph,
+      onClick: () => {},
+    },
+    {
       Component: IconPalette,
       onClick: () => {},
     },
     {
-      Component: IconSettings,
+      Component: IconDotsVertical,
       onClick: () => {
         setIsOpen(true)
       },

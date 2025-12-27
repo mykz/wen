@@ -1,51 +1,67 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
-
 import { ERROR_MESSAGES } from '@/constants/errors'
 import { getAuthUser } from '@/lib/auth'
 import { createClient } from '@/supabase/server'
 import { ApiResponse } from '@/types/api'
 import { Page } from '@/types/page'
 
-export async function updatePageAction(
+export async function checkSlugAvailabilityAction({
+  slug,
+}: {
+  slug: string
+}): Promise<ApiResponse<boolean>> {
+  const supabase = await createClient()
+
+  const response = await supabase
+    .from('pages')
+    .select('id')
+    .eq('slug', slug)
+    .maybeSingle()
+
+  if (response.error) return { error: ERROR_MESSAGES.GENERIC }
+
+  return { data: !Boolean(response.data) }
+}
+
+export async function upsertPageAction(
   page: Partial<Page>,
 ): Promise<ApiResponse<Page>> {
   const supabase = await createClient()
+
   const user = await getAuthUser()
 
   if (!user) return { error: ERROR_MESSAGES.UNAUTHORIZED }
 
   const response = await supabase
     .from('pages')
-    .update(page)
-    .eq('user_id', user.id)
-    .select('id, slug, name, bio, image_url')
+    .upsert({
+      ...page,
+      user_id: user.id,
+    })
+    .select('id, user_id, slug, name, bio, image_url')
     .maybeSingle()
 
   if (response.error) return { error: response.error.message }
 
-  revalidatePath('/build')
-
   return { data: response.data }
-}
-
-type UploadPageImageActionProps = {
-  pageId: string
-  formData: FormData
 }
 
 export async function uploadPageImageAction({
   pageId,
   formData,
-}: UploadPageImageActionProps): Promise<ApiResponse<{ imageUrl: string }>> {
+}: {
+  pageId: string
+  formData: FormData
+}): Promise<ApiResponse<{ imageUrl: string }>> {
   const supabase = await createClient()
   const user = await getAuthUser()
 
   if (!user) return { error: ERROR_MESSAGES.UNAUTHORIZED }
 
   const file = formData.get('file')
-  if (!(file instanceof File)) return { error: 'No image selected.' }
+  if (!(file instanceof File))
+    return { error: ERROR_MESSAGES.NO_IMAGE_SELECTED }
 
   const path = `${user.id}/${pageId}`
 
@@ -57,7 +73,7 @@ export async function uploadPageImageAction({
     upsert: true,
   })
 
-  if (response.error) return { error: "That didn't upload. Try again." }
+  if (response.error) return { error: ERROR_MESSAGES.FAILED_TO_UPLOAD_IMAGE }
 
   const { data } = supabase.storage.from('avatars').getPublicUrl(path)
 

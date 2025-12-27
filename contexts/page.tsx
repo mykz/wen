@@ -14,7 +14,7 @@ import {
 import debounce from 'lodash.debounce'
 import { toast } from 'sonner'
 
-import { updatePageAction } from '@/actions/page'
+import { upsertPageAction } from '@/actions/page'
 import { Page } from '@/types/page'
 
 type PageContextType = {
@@ -42,7 +42,7 @@ export const PageProvider = ({
     () =>
       debounce(async (nextPage: Page) => {
         startUpdating(async () => {
-          const { data, error } = await updatePageAction(nextPage)
+          const { data, error } = await upsertPageAction(nextPage)
 
           if (error || !data) {
             toast.error(error)

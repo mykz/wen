@@ -10,7 +10,7 @@ export async function GET(request: Request) {
     const supabase = await createClient()
     const response = await supabase.auth.exchangeCodeForSession(code)
 
-    if (!response.error) return NextResponse.redirect(`${origin}/build`)
+    if (!response.error) return NextResponse.redirect(`${origin}/pages`)
   }
 
   return NextResponse.redirect(`${origin}/login?error=auth_callback`)

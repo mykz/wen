@@ -1,4 +1,9 @@
 export const ERROR_MESSAGES = {
   GENERIC: 'The timing was off. Try once more.',
   UNAUTHORIZED: 'Unauthorized. Please log in.',
+  FAILED_TO_CREATE_PAGE: 'Failed to create page',
+  FAILED_TO_UPLOAD_IMAGE: 'Failed to upload image',
+  NO_IMAGE_SELECTED: 'No image selected',
+  FAILED_TO_GET_PAGE: 'Failed to get page',
+  FAILED_TO_GET_PAGES_LIST: 'Failed to get pages list',
 } as const

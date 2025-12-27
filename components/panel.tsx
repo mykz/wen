@@ -65,6 +65,7 @@ export function ContextPanel({
     return (
       <Dialog open={isOpen} onOpenChange={onOpenChange}>
         <DialogContent
+          aria-describedby={undefined}
           className="sm:max-w-lg ring-0 px-4 space-y-4"
           showCloseButton={false}
         >
@@ -75,7 +76,10 @@ export function ContextPanel({
 
   return (
     <Drawer open={isOpen} onOpenChange={onOpenChange}>
-      <DrawerContent className="px-4 space-y-4! pb-4">
+      <DrawerContent
+        className="px-4 space-y-4! pb-4"
+        aria-describedby={undefined}
+      >
         <DrawerTitle className="hidden" />
         {children}
       </DrawerContent>

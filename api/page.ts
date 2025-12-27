@@ -6,35 +6,34 @@ import { createClient } from '@/supabase/server'
 import { ApiResponse } from '@/types/api'
 import { Page } from '@/types/page'
 
-export const getOrCreatePage = cache(async (): Promise<ApiResponse<Page>> => {
-  const select = 'id, slug, name, bio, image_url'
+export const getPages = cache(async (): Promise<ApiResponse<Page[]>> => {
   const supabase = await createClient()
 
   const user = await getAuthUser()
   if (!user) return { error: ERROR_MESSAGES.UNAUTHORIZED }
 
-  const eResponse = await supabase
+  const response = await supabase
     .from('pages')
-    .select(select)
+    .select('id, user_id, slug, name, bio, image_url')
     .eq('user_id', user.id)
-    .maybeSingle()
 
-  if (eResponse.error) return { error: ERROR_MESSAGES.GENERIC }
-  if (eResponse.data) return { data: eResponse.data }
+  if (response.error) return { error: ERROR_MESSAGES.FAILED_TO_GET_PAGES_LIST }
 
-  const cResponse = await supabase
-    .from('pages')
-    .insert({
-      user_id: user.id,
-      slug: null,
-      title: null,
-      desc: null,
-      image_url: null,
-    })
-    .select(select)
-    .single()
-
-  if (cResponse.error) return { error: ERROR_MESSAGES.GENERIC }
-
-  return { data: cResponse.data }
+  return { data: response.data }
 })
+
+export const getPageBySlug = cache(
+  async ({ slug }: { slug: string }): Promise<ApiResponse<Page>> => {
+    const supabase = await createClient()
+
+    const response = await supabase
+      .from('pages')
+      .select('id, user_id, slug, name, bio, image_url')
+      .eq('slug', slug)
+      .maybeSingle()
+
+    if (response.error) return { error: ERROR_MESSAGES.FAILED_TO_GET_PAGE }
+
+    return { data: response.data }
+  },
+)
