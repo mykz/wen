@@ -74,9 +74,9 @@ export function ControlBar({ actions = [] }: ControlBarProps) {
       <motion.div
         {...containerProps}
         onAnimationComplete={onAnimationComplete}
-        className="px-2 py-4.5 fixed bottom-0 left-0 flex items-center justify-center gap-2 w-full"
+        className="px-2 pt-2 pb-3 fixed bottom-0 left-0 flex items-center justify-center gap-2 w-full bg-background mask-[linear-gradient(to_bottom,transparent,black_16px,black)]"
       >
-        <div className="bg-background px-2.5 flex items-center justify-center gap-4">
+        <div className="px-2.5 flex items-center justify-center gap-4">
           <motion.div layout>
             <Icon className="mx-auto w-11 h-auto" />
           </motion.div>
@@ -94,7 +94,7 @@ export function ControlBar({ actions = [] }: ControlBarProps) {
                       key={index}
                       {...linkProps}
                       onClick={action.onClick}
-                      className="cursor-pointer"
+                      className="cursor-pointer rounded p-1"
                     >
                       <Component className="size-6" />
                     </motion.div>

@@ -2,9 +2,11 @@
 
 import { ChangeEvent, useEffect, useState } from 'react'
 
+import { IconBrandTiktok, IconBrandX } from '@tabler/icons-react'
 import { usePathname, useRouter } from 'next/navigation'
 
 import { SlugPanel } from '@/components/slug-panel'
+import { Button } from '@/components/ui/button'
 import { usePage } from '@/contexts/page'
 
 import { Avatar } from './avatar'
@@ -49,7 +51,7 @@ export function Profile() {
     <div className="space-y-5">
       <Avatar />
 
-      <div className="space-y-2">
+      <div>
         <input
           type="text"
           name="name"
@@ -62,21 +64,39 @@ export function Profile() {
         />
 
         <div
-          className="text-foreground underline text-base"
+          className="text-foreground underline text-base cursor-pointer"
           onClick={() => setIsSlugEditing(true)}
         >
           @{page.slug}
         </div>
-
-        <BioField value={bio} onChange={onChangeBio} />
       </div>
+
+      <BioField value={bio} onChange={onChangeBio} />
+
+      <ul className="flex gap-5 justify-center">
+        <li className="opacity-10">
+          <a href="#" target="_blank">
+            <IconBrandTiktok />
+          </a>
+        </li>
+        <li className="opacity-10">
+          <a href="#" target="_blank">
+            <IconBrandX />
+          </a>
+        </li>
+        <li>
+          <Button variant="outline" size="icon-xs">
+            +
+          </Button>
+        </li>
+      </ul>
 
       <SlugPanel
         slug={page.slug ?? undefined}
         isOpen={isSlugEditing}
         onCompleted={onChangeSlug}
         onCancelled={() => setIsSlugEditing(false)}
-        labels={{ title: 'Edit your name', button: 'Save' }}
+        labels={{ title: 'Edit your link', button: 'Save' }}
       />
     </div>
   )

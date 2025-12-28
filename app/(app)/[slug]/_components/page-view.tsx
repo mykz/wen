@@ -9,7 +9,7 @@ type PageViewProps = {
 export function PageView({ page }: PageViewProps) {
   return (
     <div className="space-y-10">
-      <div className="space-y-5">
+      <div className="space-y-5 text-center">
         <Avatar className="size-20 rounded mx-auto">
           <AvatarImage src={page.image_url ?? undefined} />
           <AvatarFallback>
@@ -17,15 +17,16 @@ export function PageView({ page }: PageViewProps) {
           </AvatarFallback>
         </Avatar>
 
-        <div className="space-y-2 text-center">
+        <div className="">
           <h1 className="text-3xl font-bold tracking-tight w-full">
             {page.name}
           </h1>
           <div className="text-foreground underline text-base">
             @{page.slug}
           </div>
-          <p className="text-muted-foreground text-sm">{page.bio}</p>
         </div>
+
+        <p className="text-muted-foreground text-sm">{page.bio}</p>
       </div>
     </div>
   )
