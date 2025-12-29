@@ -1,6 +1,6 @@
 import { ReactNode } from 'react'
 
-import { ControlBar } from '@/components/control-bar'
+import { BarControlComp } from '@/components/composites/bars/bar-control.comp'
 
 type AuthLayoutProps = {
   children: ReactNode
@@ -12,7 +12,8 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
       <div className="flex h-screen w-screen items-center justify-center px-4 md:px-0">
         <div className="space-y-10 max-w-80 w-full text-center">{children}</div>
       </div>
-      <ControlBar />
+
+      <BarControlComp />
     </>
   )
 }

@@ -5,7 +5,7 @@ import './globals.css'
 
 import { ReactNode } from 'react'
 
-import { Toaster } from '@/components/ui/sonner'
+import { Toaster } from '@/components/shadcn/ui/sonner'
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],

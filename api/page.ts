@@ -1,10 +1,10 @@
 import { cache } from 'react'
 
 import { ERROR_MESSAGES } from '@/constants/errors'
-import { getAuthUser } from '@/lib/auth'
 import { createClient } from '@/supabase/server'
 import { ApiResponse } from '@/types/api'
 import { Page } from '@/types/page'
+import { getAuthUser } from '@/utils/auth'
 
 export const getPages = cache(async (): Promise<ApiResponse<Page[]>> => {
   const supabase = await createClient()

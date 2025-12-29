@@ -35,7 +35,7 @@ export async function authAction(_prevState: unknown, formData: FormData) {
   const response = await supabase.auth.signInWithOtp({
     email: validationResult.data.email,
     options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/callback/auth`,
     },
   })
 

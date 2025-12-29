@@ -1,10 +1,10 @@
 import { redirect } from 'next/navigation'
 
 import { getPages } from '@/api/page'
-import { ControlBar } from '@/components/control-bar'
-import { requiresAuth } from '@/lib/auth'
+import { BarControlComp } from '@/components/composites/bars/bar-control.comp'
+import { requiresAuth } from '@/utils/auth'
 
-import { NoPages } from './_components/no-pages'
+import { NoPagesZone } from './_zones/no-pages.zone'
 
 export default async function PagesPage() {
   await requiresAuth()
@@ -22,10 +22,10 @@ export default async function PagesPage() {
   return (
     <>
       <div className="flex flex-col h-screen w-screen items-center justify-center px-4 md:px-0">
-        <NoPages />
+        <NoPagesZone />
       </div>
 
-      <ControlBar />
+      <BarControlComp />
     </>
   )
 }

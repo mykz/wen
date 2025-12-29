@@ -1,8 +1,8 @@
 'use server'
 
 import { ERROR_MESSAGES } from '@/constants/errors'
-import { getAuthUser } from '@/lib/auth'
 import { createClient } from '@/supabase/server'
+import { getAuthUser } from '@/utils/auth'
 
 export async function updateDismissedEditHintAction() {
   const supabase = await createClient()

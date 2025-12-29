@@ -1,10 +1,10 @@
 import { notFound } from 'next/navigation'
 
 import { getPageBySlug } from '@/api/page'
-import { getAuthUser } from '@/lib/auth'
+import { getAuthUser } from '@/utils/auth'
 
-import { PageEdit } from './_components/page-edit'
-import { PageView } from './_components/page-view'
+import { EditPage } from './_pages/edit.page'
+import { ViewPage } from './_pages/view.page'
 
 type SlugPageProps = {
   params: Promise<{ slug: string }>
@@ -21,8 +21,8 @@ export default async function SlugPage({ params }: SlugPageProps) {
   const isEditMode = Boolean(user?.id === page?.user_id)
 
   return user && isEditMode ? (
-    <PageEdit page={page} user={user} />
+    <EditPage page={page} user={user} />
   ) : (
-    <PageView page={page} />
+    <ViewPage page={page} />
   )
 }

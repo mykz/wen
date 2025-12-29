@@ -13,9 +13,9 @@
   "iconLibrary": "tabler",
   "aliases": {
     "components": "@/components",
-    "utils": "@/lib/utils",
-    "ui": "@/components/ui",
-    "lib": "@/lib",
+    "utils": "@/utils/shadcn",
+    "ui": "@/components/shadcn/ui",
+    "lib": "@/utils",
     "hooks": "@/hooks"
   },
   "menuColor": "default",

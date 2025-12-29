@@ -1,4 +1,4 @@
-import { AuthForm } from '../_components/auth-form'
+import { AuthFormZone } from '../_zones/auth-form.zone'
 
 export default function LoginPage() {
   return (
@@ -8,7 +8,7 @@ export default function LoginPage() {
         <p className="text-base text-muted-foreground">Create your WEN.</p>
       </div>
 
-      <AuthForm />
+      <AuthFormZone />
     </>
   )
 }
