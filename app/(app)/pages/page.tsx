@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 
-import { getPages } from '@/api/page'
+import { getPages } from '@/api/page/page'
 import { BarControlComp } from '@/components/composites/bars/bar-control.comp'
 import { requiresAuth } from '@/utils/auth'
 

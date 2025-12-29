@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 
-import { getPageBySlug } from '@/api/page'
+import { getPageBySlug } from '@/api/page/page'
 import { getAuthUser } from '@/utils/auth'
 
 import { EditPage } from './_pages/edit.page'
