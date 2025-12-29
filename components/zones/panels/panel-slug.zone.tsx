@@ -1,16 +1,9 @@
-import {
-  ChangeEvent,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  useTransition,
-} from 'react'
+import { ChangeEvent, useEffect, useState, useTransition } from 'react'
 
-import debounce from 'lodash.debounce'
 import slugify from 'slugify'
 
-import { checkSlugAvailabilityAction } from '@/actions/page'
+import { checkSlugAvailabilityAction } from '@/actions/page/page'
+import { useDebounce } from '@/hooks/use-debounce'
 
 import {
   ContextPanel,
@@ -58,7 +51,7 @@ export function PanelSlugZone({
     })
   }, [slugProp])
 
-  const checkSlugAvailability = useCallback(() => {
+  const checkSlugAvailability = (slug: string) => {
     startChecking(async () => {
       if (!slug) {
         setIsNameAvailable(null)
@@ -69,19 +62,12 @@ export function PanelSlugZone({
 
       setIsNameAvailable(data ?? null)
     })
-  }, [slug])
+  }
 
-  const debouncedSlugAvailability = useMemo(
-    () => debounce(() => checkSlugAvailability(), 500),
-    [checkSlugAvailability],
+  const debouncedSlugAvailability = useDebounce(
+    (slug: string) => checkSlugAvailability(slug),
+    500,
   )
-
-  useEffect(() => {
-    if (slugProp === slug) return
-
-    debouncedSlugAvailability()
-    return () => debouncedSlugAvailability.cancel()
-  }, [slug, slugProp, debouncedSlugAvailability])
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = slugify(e.target.value, {
@@ -91,6 +77,7 @@ export function PanelSlugZone({
     })
 
     setSlug(value)
+    debouncedSlugAvailability(value)
   }
 
   const resetState = () => {

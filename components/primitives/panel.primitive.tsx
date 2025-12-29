@@ -11,15 +11,26 @@ type PanelHeaderProps = {
   title: string
   description?: string
   action?: ComponentProps<typeof Button>[]
+  feedback?: string | ReactNode
 }
 
-export function PanelHeader({ title, description, action }: PanelHeaderProps) {
+export function PanelHeader({
+  title,
+  description,
+  action,
+  feedback,
+}: PanelHeaderProps) {
   return (
     <div className="space-y-1 mb-0">
       <div className="flex gap-2 items-center">
         {title && (
           <div className="text-xl font-bold tracking-tight leading-tight grow">
             {title}
+          </div>
+        )}
+        {feedback && (
+          <div className="text-sm text-muted-foreground leading-tight">
+            {feedback}
           </div>
         )}
         {action && (
@@ -73,7 +84,7 @@ export function ContextPanel({
       <Dialog open={isOpen} onOpenChange={onOpenChange}>
         <DialogContent
           aria-describedby={undefined}
-          className="sm:max-w-lg ring-0 px-4 space-y-4"
+          className="sm:max-w-lg ring-0 px-4 space-y-4 max-h-[calc(100vh-2rem)]"
           showCloseButton={false}
         >
           {children}

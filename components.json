@@ -15,7 +15,7 @@
     "components": "@/components",
     "utils": "@/utils/shadcn",
     "ui": "@/components/shadcn/ui",
-    "lib": "@/utils",
+    "lib": "@/utils/shadcn",
     "hooks": "@/hooks"
   },
   "menuColor": "default",

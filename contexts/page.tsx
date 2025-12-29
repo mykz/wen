@@ -5,16 +5,14 @@ import {
   ReactNode,
   useCallback,
   useContext,
-  useEffect,
-  useMemo,
   useState,
   useTransition,
 } from 'react'
 
-import debounce from 'lodash.debounce'
 import { toast } from 'sonner'
 
-import { upsertPageAction } from '@/actions/page'
+import { upsertPageAction } from '@/actions/page/page'
+import { useDebounce } from '@/hooks/use-debounce'
 import { Page } from '@/types/page'
 
 type PageContextType = {
@@ -38,28 +36,18 @@ export const PageProvider = ({
 
   const [page, setPage] = useState<Page>(pageProp)
 
-  const debouncedUpdate = useMemo(
-    () =>
-      debounce(async (nextPage: Page) => {
-        startUpdating(async () => {
-          const { data, error } = await upsertPageAction(nextPage)
+  const debouncedUpdate = useDebounce((nextPage: Page) => {
+    startUpdating(async () => {
+      const { data, error } = await upsertPageAction(nextPage)
 
-          if (error || !data) {
-            toast.error(error)
-            return
-          }
+      if (error || !data) {
+        toast.error(error)
+        return
+      }
 
-          setPage((prev) => ({ ...prev, ...data }))
-        })
-      }, 1000),
-    [],
-  )
-
-  useEffect(() => {
-    return () => {
-      debouncedUpdate.cancel()
-    }
-  }, [debouncedUpdate])
+      setPage((prev) => ({ ...prev, ...data }))
+    })
+  }, 1000)
 
   const update = useCallback(
     (updates: Partial<Page>) => {

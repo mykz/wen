@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
-import { upsertPageAction } from '@/actions/page'
+import { upsertPageAction } from '@/actions/page/page'
 import { Button } from '@/components/shadcn/ui/button'
 import { PanelSlugZone } from '@/components/zones/panels/panel-slug.zone'
 import { ERROR_MESSAGES } from '@/constants/errors'

@@ -2,7 +2,7 @@ import { useRef, useTransition } from 'react'
 
 import { toast } from 'sonner'
 
-import { uploadPageImageAction } from '@/actions/page'
+import { uploadPageImageAction } from '@/actions/page/page'
 import {
   AvatarFallback,
   AvatarImage,
