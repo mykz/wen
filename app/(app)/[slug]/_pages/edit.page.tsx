@@ -1,6 +1,7 @@
 import { User } from '@supabase/supabase-js'
 
-import { PageProvider } from '@/contexts/page'
+import { getSocialLinksAction } from '@/actions/page/page-social-links'
+import { PageProvider } from '@/contexts/page/page'
 import { Page } from '@/types/page'
 
 import { ControlBarComp } from '../_composites/control-bar.comp'
@@ -13,9 +14,11 @@ type EditPageProps = {
   user: User
 }
 
-export function EditPage({ page, user }: EditPageProps) {
+export async function EditPage({ page, user }: EditPageProps) {
+  const { data: socialLinks } = await getSocialLinksAction(page.id)
+
   return (
-    <PageProvider page={page}>
+    <PageProvider page={page} socialLinks={socialLinks ?? []}>
       <EditHintZone
         isDismissed={Boolean(user?.user_metadata?.dismissed_edit_hint)}
       />

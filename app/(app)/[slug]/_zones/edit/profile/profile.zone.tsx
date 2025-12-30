@@ -5,14 +5,14 @@ import { ChangeEvent, useEffect, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 
 import { PanelSlugZone } from '@/components/zones/panels/panel-slug.zone'
-import { usePage } from '@/contexts/page'
+import { usePage } from '@/contexts/page/page'
 
 import { BioFieldComp } from '../../../_composites/bio-field.comp'
 import { ProfileAvatarZone } from './profile-avatar.zone'
 import { SocialLinksZone } from './social-links/social-links.zone'
 
 export function ProfileZone() {
-  const { update, page, isUpdating } = usePage()
+  const { updatePage, page, isUpdatingPage } = usePage()
   const pathname = usePathname()
   const router = useRouter()
 
@@ -27,24 +27,24 @@ export function ProfileZone() {
     const value = e.target.value
 
     setName(value)
-    update({ name: value })
+    updatePage({ name: value })
   }
   const onChangeBio = (value: string) => {
     setBio(value)
-    update({ bio: value })
+    updatePage({ bio: value })
   }
   const onChangeSlug = (slug: string) => {
     setIsSlugEditing(false)
-    update({ slug })
+    updatePage({ slug })
   }
 
   useEffect(() => {
-    if (isUpdating) return
+    if (isUpdatingPage) return
 
-    if (isUpdating || page.slug === pathname) return
+    if (isUpdatingPage || page.slug === pathname) return
 
     window.history.replaceState(null, '', `/${page.slug}`)
-  }, [isUpdating, page.slug, pathname, router])
+  }, [isUpdatingPage, page.slug, pathname, router])
 
   return (
     <div className="space-y-5">

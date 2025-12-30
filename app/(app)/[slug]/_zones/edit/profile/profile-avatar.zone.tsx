@@ -8,12 +8,12 @@ import {
   AvatarImage,
   Avatar as CNAvatar,
 } from '@/components/shadcn/ui/avatar'
-import { usePage } from '@/contexts/page'
+import { usePage } from '@/contexts/page/page'
 import { cn } from '@/utils/shadcn'
 import { getfirstAndLastCharacter } from '@/utils/string'
 
 export function ProfileAvatarZone() {
-  const { page, update } = usePage()
+  const { page, updatePage } = usePage()
 
   const [isUploading, startUpload] = useTransition()
 
@@ -37,7 +37,7 @@ export function ProfileAvatarZone() {
         return
       }
 
-      update({ image_url: data?.imageUrl ?? null })
+      updatePage({ image_url: data?.imageUrl ?? null })
     })
   }
 

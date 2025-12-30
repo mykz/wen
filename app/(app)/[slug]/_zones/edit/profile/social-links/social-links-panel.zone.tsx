@@ -1,20 +1,8 @@
-import {
-  KeyboardEvent,
-  useEffect,
-  useMemo,
-  useState,
-  useTransition,
-} from 'react'
+import { KeyboardEvent, useEffect, useMemo, useState } from 'react'
 
 import { IconPlus, IconTrash } from '@tabler/icons-react'
 import { AnimatePresence, motion } from 'motion/react'
-import { toast } from 'sonner'
 
-import {
-  deleteSocialLinkAction,
-  getSocialLinksAction,
-  upsertSocialLinkAction,
-} from '@/actions/page/page-social-links'
 import {
   ContextPanel,
   PanelContent,
@@ -30,8 +18,7 @@ import {
 import { Input } from '@/components/shadcn/ui/input'
 import { Spinner } from '@/components/shadcn/ui/spinner'
 import { SOCIALS } from '@/constants/socials'
-import { usePage } from '@/contexts/page'
-import { useDebounce } from '@/hooks/use-debounce'
+import { usePage } from '@/contexts/page/page'
 import { PageSocialLink } from '@/types/page'
 import { safeHostname } from '@/utils/domain'
 import { isValidEmail } from '@/utils/email'
@@ -54,139 +41,66 @@ const getSocialType = (link: string) => {
 
 type SocialLinksPanelZoneProps = {
   isOpen: boolean
-  onCancelled: (links: PageSocialLink[]) => void
+  onCancelled: () => void
 }
 
 export function SocialLinksPanelZone({
   isOpen,
   onCancelled: onCancelledProp,
 }: SocialLinksPanelZoneProps) {
-  const { page } = usePage()
-  const [isAddingLink, startAddingLink] = useTransition()
+  const {
+    page,
+    socialLinks,
+    updateSocialLinks,
+    deleteSocialLink,
+    isUpdatingSocialLinks,
+    isSocialLinksError,
+  } = usePage()
 
-  const [links, setLinks] = useState<PageSocialLink[]>([])
+  const [links, setLinks] = useState<PageSocialLink[]>(socialLinks)
   const [link, setLink] = useState<string | null>(null)
-  const [linkAddError, setLinkAddError] = useState(false)
-  const [linkAddCompleted, setLinkAddCompleted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSaved, setIsSaved] = useState(false)
 
   useEffect(() => {
-    ;(async () => {
-      const { data, error } = await getSocialLinksAction(page.id)
-      const newLinks = data ?? []
-
-      if (error) return
-
-      setLinks((prev) => {
-        if (!newLinks.length) return prev
-
-        return newLinks
-      })
-    })()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    setLinks(socialLinks)
+  }, [socialLinks])
 
   useEffect(() => {
-    if (!linkAddCompleted) return
+    if (isUpdatingSocialLinks) return
 
-    const t = setTimeout(() => setLinkAddCompleted(false), 1500)
+    setIsSubmitting(false)
 
-    return () => clearTimeout(t)
-  }, [linkAddCompleted])
+    if (!isSocialLinksError) setLink(null)
+  }, [isUpdatingSocialLinks, isSocialLinksError])
 
-  const addLink = () => {
-    startAddingLink(async () => {
-      const linkValue = (link ?? '').trim()
+  useEffect(() => {
+    if (isUpdatingSocialLinks || isSubmitting) return
+    if (isSocialLinksError) return
 
-      setLinkAddError(false)
-      setLinkAddCompleted(false)
+    setIsSaved(true)
 
-      const { data, error } = await upsertSocialLinkAction({
-        type: getSocialType(linkValue),
-        link: linkValue,
+    const t = window.setTimeout(() => setIsSaved(false), 1200)
+    return () => window.clearTimeout(t)
+  }, [isUpdatingSocialLinks, isSubmitting, isSocialLinksError])
+
+  const onClickAdd = () => {
+    if (!link) return
+
+    setIsSubmitting(true)
+
+    updateSocialLinks([
+      ...links,
+      {
+        type: getSocialType(link),
+        link: link,
         sort_order: links.length + 1,
         page_id: page.id,
-      })
-
-      if (error) {
-        toast.error(error)
-        setLinkAddError(true)
-        return
-      }
-
-      if (!data) return
-
-      setLink(null)
-      setLinks((prev) => [...prev, data])
-      setLinkAddCompleted(true)
-    })
+      },
+    ])
   }
 
-  const updateLink = (linkId: string, linkValue: string) => {
-    startAddingLink(async () => {
-      setLinkAddError(false)
-      setLinkAddCompleted(false)
-
-      const link = links.find((link) => link.id === linkId)
-      if (!link) return
-
-      const { data, error } = await upsertSocialLinkAction({
-        ...link,
-        link: linkValue,
-      })
-
-      if (error) {
-        toast.error(error)
-        setLinkAddError(true)
-        return
-      }
-
-      if (!data) return
-
-      setLinks((prev) => {
-        return prev.map((link) => {
-          if (link.id !== linkId) return link
-
-          return { ...link, link: linkValue, type: getSocialType(linkValue) }
-        })
-      })
-
-      setLinkAddCompleted(true)
-    })
-  }
-
-  const debouncedUpdateLink = useDebounce(
-    (linkId: string, linkValue: string) => {
-      updateLink(linkId, linkValue)
-    },
-    500,
-  )
-
-  const deleteLink = async (linkId: string) => {
-    setLinks((prev) => prev.filter((link) => link.id !== linkId))
-
-    const { data, error } = await deleteSocialLinkAction(linkId)
-
-    if (error) {
-      toast.error(error)
-      return
-    }
-
-    if (!data) return
-  }
-
-  const updateLocalLink = (linkId: string, linkValue: string) => {
-    setLinks((prev) => {
-      return prev.map((link) => {
-        if (link.id !== linkId) return link
-
-        return { ...link, link: linkValue, type: getSocialType(linkValue) }
-      })
-    })
-
-    debouncedUpdateLink(linkId, linkValue)
-  }
-
-  const onCancelled = () => onCancelledProp?.(links)
+  const onCancelled = () => onCancelledProp?.()
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setLink(e.target.value)
@@ -196,9 +110,19 @@ export function SocialLinksPanelZone({
 
     e.preventDefault()
 
-    addLink()
+    onClickAdd()
   }
 
+  const onChangeLink = (linkId: string, linkValue: string) => {
+    const nextLinks = socialLinks.map((link) => {
+      if (link.id !== linkId) return link
+
+      return { ...link, link: linkValue, type: getSocialType(linkValue) }
+    })
+
+    setLinks(nextLinks)
+    updateSocialLinks(nextLinks)
+  }
   const onKeyDownLink = (
     linkId: string,
     e: KeyboardEvent<HTMLInputElement>,
@@ -209,11 +133,10 @@ export function SocialLinksPanelZone({
 
     const linkValue = (e.target as HTMLInputElement).value
 
-    updateLocalLink(linkId, linkValue)
+    onChangeLink(linkId, linkValue)
   }
 
-  const onClickAdd = () => addLink()
-  const onClickDelete = (linkId: string) => deleteLink(linkId)
+  const onClickDeleteLink = (linkId: string) => deleteSocialLink(linkId)
 
   const AddIcon = useMemo(() => {
     const type = getSocialType(link ?? '')
@@ -221,17 +144,19 @@ export function SocialLinksPanelZone({
   }, [link])
 
   const feedback = useMemo(() => {
-    if (isAddingLink)
+    if (isUpdatingSocialLinks || isSubmitting)
       return (
         <span className="flex items-center gap-2">
           <Spinner /> Saving
         </span>
       )
 
-    if (linkAddError || !linkAddCompleted) return
+    if (isSocialLinksError) return
 
-    return 'Saved!'
-  }, [isAddingLink, linkAddError, linkAddCompleted])
+    if (!isSaved) return
+
+    return 'Saved'
+  }, [isUpdatingSocialLinks, isSocialLinksError, isSubmitting, isSaved])
 
   return (
     <ContextPanel isOpen={isOpen} onChangeOpen={onCancelled}>
@@ -251,7 +176,12 @@ export function SocialLinksPanelZone({
                 onKeyDown={onKeyDown}
               />
 
-              <Button type="button" onClick={onClickAdd} size="icon">
+              <Button
+                type="button"
+                onClick={onClickAdd}
+                size="icon"
+                disabled={isSubmitting}
+              >
                 <IconPlus className="size-4 shrink-0" />
               </Button>
             </Field>
@@ -282,7 +212,7 @@ export function SocialLinksPanelZone({
                             name="link"
                             value={link.link ?? ''}
                             onChange={(e) =>
-                              updateLocalLink(link.id, e.target.value)
+                              onChangeLink(link.id, e.target.value)
                             }
                             onKeyDown={(e) => onKeyDownLink(link.id, e)}
                           />
@@ -291,7 +221,7 @@ export function SocialLinksPanelZone({
                             type="button"
                             size="icon"
                             variant="destructive"
-                            onClick={() => onClickDelete(link.id)}
+                            onClick={() => onClickDeleteLink(link.id)}
                           >
                             <IconTrash className="size-4 shrink-0 hover:text-destructive transition-colors" />
                           </Button>

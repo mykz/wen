@@ -13,31 +13,42 @@ import { toast } from 'sonner'
 
 import { upsertPageAction } from '@/actions/page/page'
 import { useDebounce } from '@/hooks/use-debounce'
-import { Page } from '@/types/page'
+import { Page, PageSocialLink } from '@/types/page'
+
+import {
+  UsePageSocialLinks,
+  usePageSocialLinks,
+} from './hooks/use-page-social-links'
 
 type PageContextType = {
   page: Page
-  isUpdating: boolean
-  update: (updates: Partial<Page>) => void
-}
+  isUpdatingPage: boolean
+  updatePage: (updates: Partial<Page>) => void
+} & UsePageSocialLinks
 
 const PageContext = createContext<PageContextType | null>(null)
 
 type PageProviderProps = {
   page: Page
+  socialLinks: PageSocialLink[]
   children: ReactNode
 }
 
 export const PageProvider = ({
   page: pageProp,
+  socialLinks: socialLinksProp,
   children,
 }: PageProviderProps) => {
-  const [isUpdating, startUpdating] = useTransition()
+  const socialLinks = usePageSocialLinks({
+    page: pageProp,
+    socialLinks: socialLinksProp,
+  })
+  const [isUpdatingPage, startUpdatingPage] = useTransition()
 
   const [page, setPage] = useState<Page>(pageProp)
 
-  const debouncedUpdate = useDebounce((nextPage: Page) => {
-    startUpdating(async () => {
+  const debouncedPageUpdate = useDebounce((nextPage: Page) => {
+    startUpdatingPage(async () => {
       const { data, error } = await upsertPageAction(nextPage)
 
       if (error || !data) {
@@ -49,19 +60,20 @@ export const PageProvider = ({
     })
   }, 1000)
 
-  const update = useCallback(
+  const updatePage = useCallback(
     (updates: Partial<Page>) => {
       if (!updates) return
 
-      debouncedUpdate({ ...page, ...updates })
+      debouncedPageUpdate({ ...page, ...updates })
     },
-    [page, debouncedUpdate],
+    [page, debouncedPageUpdate],
   )
 
   const value = {
     page,
-    isUpdating,
-    update,
+    isUpdatingPage,
+    updatePage,
+    ...socialLinks,
   }
 
   return <PageContext.Provider value={value}>{children}</PageContext.Provider>
